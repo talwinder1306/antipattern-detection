@@ -25,6 +25,7 @@ import padl.kernel.IField;
 import padl.kernel.IFirstClassEntity;
 import padl.kernel.IMethod;
 import padl.kernel.IMethodInvocation;
+import padl.kernel.impl.Method;
 import pom.metrics.IUnaryMetric;
 import pom.metrics.MetricsRepository;
 import pom.primitives.ClassPrimitives;
@@ -77,6 +78,12 @@ public class UnusedMethodDetection extends AbstractCodeSmellDetection implements
 
 				for (Iterator iterMethod1 = methodsOfClass.iterator(); iterMethod1.hasNext();) {
 					final IMethod method1 = (IMethod) iterMethod1.next();
+					//System.out.println(method1.isPublic() + " " + method1.isStatic() + " " + method1.getDisplayName() + " " + new String(method1.getReturnType()));
+					if(method1.isPublic() && method1.isStatic() 
+							&& "main".equals(method1.getDisplayName())
+							&& "void".equals(new String(method1.getReturnType()))) {
+						continue;
+					}
 					final Iterator iterator = anAbstractLevelModel.getIteratorOnTopLevelEntities();
 					int listOfMethodCalls = 0;
 					//System.out.println("# method1 " + method1.getDisplayName() + " " + method1.getDisplayPath());
