@@ -73,7 +73,6 @@ public class UnusedMethodDetection extends AbstractCodeSmellDetection implements
 				// classPrimitives.listOfImplementedFields(anEntity).size());
 
 				final Collection methodsOfClass = classPrimitives.listOfOverriddenAndConcreteMethods(anEntity);
-				List ancestors = classPrimitives.listOfAncestors(anEntity);
 				//System.out.println("CLass " + anEntity.getDisplayName() + " " + methodsOfClass.size());
 
 				for (Iterator iterMethod1 = methodsOfClass.iterator(); iterMethod1.hasNext();) {
@@ -91,16 +90,16 @@ public class UnusedMethodDetection extends AbstractCodeSmellDetection implements
 						final IFirstClassEntity otherEntity = (IFirstClassEntity) iterator.next();
 
 						if (!otherEntity.equals(anEntity) && otherEntity instanceof IClass) {
-							listOfMethodCalls = methodPrimitives.numberOfUsesByFieldsOrMethods(otherEntity, anEntity);
-							listOfMethodCalls += methodPrimitives.listOfSisterMethodCalledByMethod(otherEntity, method1)
-									.size();
-							if (listOfMethodCalls > 0) {
-								//System.out.println("numberOfUsesByFieldsOrMethods " + anEntity.getDisplayName()
-								//		+ " other " + otherEntity.getDisplayName() + " Number " + listOfMethodCalls);
-								CodeSmell dc = new CodeSmell("ClassHasUnusedMethods", "", new ClassProperty((IClass) anEntity));
-								methodsAreNotCalled.add(dc);
-							}
+							listOfMethodCalls += methodPrimitives.numberOfUsesByFieldsOrMethods(otherEntity, anEntity);
+							//System.out.println(listOfMethodCalls);
 						}
+					}
+					
+					if (listOfMethodCalls == 0) {
+						System.out.println("ClassHasUnusedMethods " + anEntity.getDisplayName()
+								+ " method " + method1.getDisplayName());
+						CodeSmell dc = new CodeSmell("ClassHasUnusedMethods", "", new ClassProperty((IClass) anEntity));
+						methodsAreNotCalled.add(dc);
 					}
 				}
 			}
