@@ -1,0 +1,5 @@
+Dead Parameter with AST. Total elapse time: 0.405 seconds.
+Parameter ; dir has 0 references ; ptidej.sad.smelldetectioncaller.SmellDetectionHelper (line:198)
+Parameter ; someSmells has 0 references ; ptidej.sad.smelldetectioncaller.SmellDetectionHelper (line:442)
+Parameter ; idiomLevelModel has 0 references ; ptidej.sad.smelldetectioncaller.SmellDetectionHelper (line:541)
+Total Dead Parameter Count : 3

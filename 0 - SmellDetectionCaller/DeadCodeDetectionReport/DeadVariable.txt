@@ -1,0 +1,8 @@
+Dead Variable with AST. Total elapse time: 0.241 seconds.
+Variable ; result has 0 references ; ptidej.pom.metrics.repository.UUF (line:52) ; dead variable
+Variable ; result has 0 references ; ptidej.pom.metrics.repository.UUM (line:36) ; dead variable
+Variable ; listOfMethodCalls has 0 references ; ptidej.pom.metrics.repository.UUM (line:45) ; dead variable
+Variable ; iter1 has 0 references ; ptidej.sad.codesmell.detection.repository.UnusedClassDetection (line:64) ; dead variable
+Variable ; entityList has 0 references ; ptidej.sad.codesmell.detection.repository.UnusedMethodDetection (line:69) ; dead variable
+Variable ; relations has 0 references ; ptidej.sad.designsmell.detection.repository.LavaFlowDetection (line:40) ; dead variable
+Total Dead Variable Count : 6

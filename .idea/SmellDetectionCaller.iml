@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/CPL/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Java Parser/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Analyses/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Creator C++ (Eclipse)/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Creator ClassFile/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Creator JavaFile (Eclipse)/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Design Motifs/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Statements Creator ClassFile/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL Statements/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PADL/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/POM/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Ptidej/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SAD/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/SmellDetectionCaller/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/0 - SmellDetectionCaller" />
+      <excludeFolder url="file://$MODULE_DIR$/0 - SmellDetectionCaller/src" />
+      <excludeFolder url="file://$MODULE_DIR$/Temp" />
+    </content>
+    <content url="file://$MODULE_DIR$/.idea" />
+    <content url="file://$MODULE_DIR$/.metadata" />
+    <content url="file://$MODULE_DIR$/0 - SmellDetectionCaller" />
+    <content url="file://$MODULE_DIR$/CPL" />
+    <content url="file://$MODULE_DIR$/Java Parser" />
+    <content url="file://$MODULE_DIR$/PADL" />
+    <content url="file://$MODULE_DIR$/PADL Analyses" />
+    <content url="file://$MODULE_DIR$/PADL Creator C++ (Eclipse)" />
+    <content url="file://$MODULE_DIR$/PADL Creator C++ (Eclipse) CDT" />
+    <content url="file://$MODULE_DIR$/PADL Creator C++ (Eclipse) Helper" />
+    <content url="file://$MODULE_DIR$/PADL Creator ClassFile" />
+    <content url="file://$MODULE_DIR$/PADL Creator JavaFile (Eclipse)" />
+    <content url="file://$MODULE_DIR$/PADL Design Motifs" />
+    <content url="file://$MODULE_DIR$/PADL Statements" />
+    <content url="file://$MODULE_DIR$/PADL Statements Creator ClassFile" />
+    <content url="file://$MODULE_DIR$/POM" />
+    <content url="file://$MODULE_DIR$/Ptidej" />
+    <content url="file://$MODULE_DIR$/SAD" />
+    <content url="file://$MODULE_DIR$/SmellDetectionCaller" />
+    <content url="file://$MODULE_DIR$/Temp" />
+    <content url="file://$MODULE_DIR$/production" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Ptidej" level="project" />
+    <orderEntry type="library" name="Ptidej_lib" level="project" />
+  </component>
+</module>

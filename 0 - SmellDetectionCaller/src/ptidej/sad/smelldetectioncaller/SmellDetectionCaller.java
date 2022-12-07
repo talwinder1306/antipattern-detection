@@ -13,10 +13,19 @@ package ptidej.sad.smelldetectioncaller;
 public class SmellDetectionCaller {
 	public static void main(final String[] args) {
 		 //SmellDetectionHelper.analyseCodeLevelModelFromJavaClassFiles("../0 - SmellDetectionCaller/bin/",
-		//		"SmellDetectionCaller Itself", "rsc/test5/");
+			//	"SmellDetectionCaller Itself", "rsc/test5/");
 		SmellDetectionHelper
 		.analyseCodeLevelModelFromJavaClassFiles(
-				"F:/Talwinder/Learning/Masters/Final Thesis/Code/AntiPatternTest/build/classes/java/main/org/",
-				"Antipattern test", "rsc/test3/");
+				"F:/Talwinder/Learning/Masters/Final Thesis/Code/AntiPatternTest/build/classes/java/",
+				"Antipattern test", "rsc/testres/");
+		 
+		 
+		 //SmellDetectionHelper
+		 //.analyseCodeLevelModelFromJavaClassFiles("F:/Talwinder/Learning/Masters/Final Thesis/Code/deadcodetestproject/target/classes/com/eakonovalov/test/", 
+		//		 "DeadCodeTestProject", "rsc/deadcodetest/");
+		 
+		 //SmellDetectionHelper
+		 //.analyseCodeLevelModelFromJavaClassFiles("C:/Users/hp/Downloads/jforum2-code-r984-branches-v2.3.6_csrf/jforum2-code-r984-branches-v2.3.6_csrf/target/classes/net/", 
+		//		 "JForum", "rsc/jforum/");
 	}
 }

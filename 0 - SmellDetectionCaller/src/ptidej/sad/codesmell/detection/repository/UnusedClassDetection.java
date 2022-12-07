@@ -26,9 +26,11 @@ import padl.kernel.IAbstractLevelModel;
 import padl.kernel.IClass;
 import padl.kernel.IEntity;
 import padl.kernel.IMethod;
+import pom.metrics.IBinaryMetric;
 import pom.metrics.IUnaryMetric;
 import pom.metrics.MetricsRepository;
 import pom.primitives.ClassPrimitives;
+import pom.primitives.MethodPrimitives;
 import sad.codesmell.detection.ICodeSmellDetection;
 import sad.codesmell.detection.repository.AbstractCodeSmellDetection;
 import sad.codesmell.property.impl.ClassProperty;
@@ -48,21 +50,30 @@ public class UnusedClassDetection extends AbstractCodeSmellDetection implements 
 	public void detect(final IAbstractLevelModel anAbstractLevelModel) {
 		final Set classesIsNotCalled = new HashSet();
 		ClassPrimitives classPrimitives = ClassPrimitives.getInstance();
-
+		MethodPrimitives methodPrimitives = MethodPrimitives.getInstance();
+		
 		final Iterator iter = anAbstractLevelModel.getIteratorOnTopLevelEntities();
 		while (iter.hasNext()) {
 			final IEntity entity = (IEntity) iter.next();
 			if (entity instanceof IClass) {
 				final IClass aClass = (IClass) entity;
-				// System.out.println("Class name " + aClass);
+				System.out.println("Class name " + aClass);
 				final double CBOin = ((IUnaryMetric) MetricsRepository.getInstance().getMetric("CBOin"))
 						.compute(anAbstractLevelModel, aClass);
-				// System.out.println("CBOin " + CBOin);
+				System.out.println("CBOin " + CBOin);
 				final double connectivity = ((IUnaryMetric) MetricsRepository.getInstance().getMetric("connectivity"))
 						.compute(anAbstractLevelModel, aClass);
-				// System.out.println("connectivity " + connectivity);
-				final Iterator iter1 = anAbstractLevelModel.getIteratorOnTopLevelEntities();
-
+				System.out.println("connectivity " + connectivity);
+				/*
+				 * final Iterator iter1 = anAbstractLevelModel.getIteratorOnTopLevelEntities();
+				 * while(iter1.hasNext()) { final IEntity otherEntity = (IEntity) iter1.next();
+				 * if(otherEntity instanceof IClass) { final IClass otherClass = (IClass)
+				 * otherEntity; if(!otherClass.equals(aClass)) { final double oneWayCoupling =
+				 * ((IBinaryMetric) MetricsRepository.getInstance().getMetric("oneWayCoupling"))
+				 * .compute(anAbstractLevelModel, otherClass, aClass);
+				 * System.out.println("oneWayCoupling between " + otherClass.getDisplayName() +
+				 * " and " + aClass.getDisplayName() + " " + oneWayCoupling); } } }
+				 */
 				if (CBOin == 0.0 && connectivity == 0.0) {
 					final Collection methodsOfClass = classPrimitives.listOfOverriddenAndConcreteMethods(aClass);
 					// System.out.println("CLass " + anEntity.getDisplayName() + " " +

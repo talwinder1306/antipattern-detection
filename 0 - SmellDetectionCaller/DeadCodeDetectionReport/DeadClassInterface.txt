@@ -1,0 +1,5 @@
+Total detect time: 0.917 seconds.
+Class	UUF	at line: 16	in: ptidej.pom.metrics.repository.UUF.java
+Class	UUM	at line: 16	in: ptidej.pom.metrics.repository.UUM.java
+Class	LavaFlowDetection	at line: 38	in: ptidej.sad.designsmell.detection.repository.LavaFlowDetection.java
+Class	SmellDetectionCaller	at line: 13	in: ptidej.sad.smelldetectioncaller.SmellDetectionCaller.java

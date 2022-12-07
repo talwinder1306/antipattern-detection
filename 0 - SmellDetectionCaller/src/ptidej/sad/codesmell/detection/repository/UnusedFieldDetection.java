@@ -27,7 +27,7 @@ import pom.primitives.ClassPrimitives;
 import pom.primitives.MethodPrimitives;
 import ptidej.pom.metrics.repository.UUF;
 import ptidej.pom.metrics.repository.UUM;
-import ptidej.utils.CompositeEntity;
+import ptidej.utils.CompositeFieldEntity;
 import ptidej.utils.SmellDetectUtils;
 import sad.codesmell.detection.ICodeSmellDetection;
 import sad.codesmell.detection.repository.AbstractCodeSmellDetection;
@@ -53,7 +53,7 @@ public class UnusedFieldDetection extends AbstractCodeSmellDetection implements 
 	public void detect(final IAbstractLevelModel anAbstractLevelModel) {
 		final Set fieldsNotUsed = new HashSet();
 
-		Set<CompositeEntity> allFields = new HashSet();
+		Set<CompositeFieldEntity> allFields = new HashSet();
 		Iterator entityIterator = anAbstractLevelModel.getIteratorOnTopLevelEntities();
 		while (entityIterator.hasNext()) {
 			final IFirstClassEntity firstClassEntity = (IFirstClassEntity) entityIterator.next();
@@ -63,7 +63,7 @@ public class UnusedFieldDetection extends AbstractCodeSmellDetection implements 
 				while (iterator1.hasNext()) {
 					IField field = (IField) iterator1.next();
 
-					allFields.add(new CompositeEntity(firstClassEntity, field));
+					allFields.add(new CompositeFieldEntity(firstClassEntity, field));
 					// System.out.println("Field - " + field);
 				}
 			}
@@ -84,7 +84,7 @@ public class UnusedFieldDetection extends AbstractCodeSmellDetection implements 
 					final IMethod method = (IMethod) entityList.get(i);
 					List<IField> usedFieldsByMethod = methodPrimitives.listOfFieldsUsedByMethod(anEntity, method);
 					for (IField field : usedFieldsByMethod) {
-						usedFields.add(new CompositeEntity(anEntity, field));
+						usedFields.add(new CompositeFieldEntity(anEntity, field));
 					}
 					// System.out.println("listOfFieldsUsedByMethod method "
 					// + usedFieldsByMethod.size() + " " + usedFields);
@@ -95,7 +95,9 @@ public class UnusedFieldDetection extends AbstractCodeSmellDetection implements 
 		allFields.removeAll(usedFields);
 		//System.out.println("Final set " + allFields);
 		
-		for(CompositeEntity ce : allFields) {
+		for(CompositeFieldEntity ce : allFields) {
+			System.out.println("ClassHasUnusedFields " + ce.getClassEntity().getDisplayName() 
+					+ " " + ce.getFieldEntity().getDisplayName());
 			CodeSmell dc = new CodeSmell("ClassHasUnusedFields", "", new ClassProperty((IClass) ce.getClassEntity()));
 			fieldsNotUsed.add(dc);
 		}

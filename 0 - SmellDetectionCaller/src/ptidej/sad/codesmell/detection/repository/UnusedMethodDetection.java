@@ -20,6 +20,7 @@ package ptidej.sad.codesmell.detection.repository;
 import padl.kernel.IAbstractLevelModel;
 import padl.kernel.IClass;
 import padl.kernel.IConstituent;
+import padl.kernel.IConstructor;
 import padl.kernel.IEntity;
 import padl.kernel.IField;
 import padl.kernel.IFirstClassEntity;
@@ -31,6 +32,7 @@ import pom.metrics.MetricsRepository;
 import pom.primitives.ClassPrimitives;
 import pom.primitives.MethodPrimitives;
 import ptidej.pom.metrics.repository.UUM;
+import ptidej.utils.CompositeMethodEntity;
 import ptidej.utils.SmellDetectUtils;
 import sad.codesmell.detection.ICodeSmellDetection;
 import sad.codesmell.detection.repository.AbstractCodeSmellDetection;
@@ -46,6 +48,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -59,52 +63,112 @@ public class UnusedMethodDetection extends AbstractCodeSmellDetection implements
 	}
 
 	public void detect(final IAbstractLevelModel anAbstractLevelModel) {
-		final Set methodsAreNotCalled = new HashSet();
+		ClassPrimitives classPrimitives = ClassPrimitives.getInstance();
+		MethodPrimitives methodPrimitives = MethodPrimitives.getInstance();
 
+		final Set methodsAreNotCalled = new HashSet();
+		final Map<CompositeMethodEntity, Integer> methodCalledFrequency = new HashMap<>();
+		final Set allMethodsInProject = getAllMethodsInProject(anAbstractLevelModel);
+		initialiseMethodCalledFrequencyForAllMethods(anAbstractLevelModel, methodCalledFrequency);
 		final Iterator iter = anAbstractLevelModel.getIteratorOnTopLevelEntities();
 		while (iter.hasNext()) {
 			final IFirstClassEntity anEntity = (IFirstClassEntity) iter.next();
 			if (anEntity instanceof IClass) {
-				ClassPrimitives classPrimitives = ClassPrimitives.getInstance();
-				List entityList = classPrimitives.listOfAllMethods(anEntity);
-				// System.out.println(classPrimitives.listOfAllMethods(anEntity).size());
-				MethodPrimitives methodPrimitives = MethodPrimitives.getInstance();
-				// System.out.println("Implemented " +
-				// classPrimitives.listOfImplementedFields(anEntity).size());
-
-				final Collection methodsOfClass = classPrimitives.listOfOverriddenAndConcreteMethods(anEntity);
-				//System.out.println("CLass " + anEntity.getDisplayName() + " " + methodsOfClass.size());
-
+				List methodsOfClass = classPrimitives.listOfAllMethods(anEntity);
 				for (Iterator iterMethod1 = methodsOfClass.iterator(); iterMethod1.hasNext();) {
 					final IMethod method1 = (IMethod) iterMethod1.next();
-					//System.out.println(method1.isPublic() + " " + method1.isStatic() + " " + method1.getDisplayName() + " " + new String(method1.getReturnType()));
-					if(method1.isPublic() && method1.isStatic() 
-							&& "main".equals(method1.getDisplayName())
+					/*
+					 * Check if the method is main method it should be marked as used
+					 */
+					if (method1.isPublic() && method1.isStatic() && "main".equals(method1.getDisplayName())
 							&& "void".equals(new String(method1.getReturnType()))) {
-						continue;
+						methodCalledFrequency.put(new CompositeMethodEntity(anEntity, method1), 1);
 					}
-					final Iterator iterator = anAbstractLevelModel.getIteratorOnTopLevelEntities();
-					int listOfMethodCalls = 0;
-					//System.out.println("# method1 " + method1.getDisplayName() + " " + method1.getDisplayPath());
-					while (iterator.hasNext()) {
-						final IFirstClassEntity otherEntity = (IFirstClassEntity) iterator.next();
 
-						if (!otherEntity.equals(anEntity) && otherEntity instanceof IClass) {
-							listOfMethodCalls += methodPrimitives.numberOfUsesByFieldsOrMethods(otherEntity, anEntity);
-							//System.out.println(listOfMethodCalls);
-						}
-					}
-					
-					if (listOfMethodCalls == 0) {
-						System.out.println("ClassHasUnusedMethods " + anEntity.getDisplayName()
-								+ " method " + method1.getDisplayName());
-						CodeSmell dc = new CodeSmell("ClassHasUnusedMethods", "", new ClassProperty((IClass) anEntity));
-						methodsAreNotCalled.add(dc);
-					}
+					countMethodInvocations(methodCalledFrequency, allMethodsInProject, method1);
 				}
 			}
 		}
 
+		for (Entry<CompositeMethodEntity, Integer> methodCalledFreqEntry : methodCalledFrequency.entrySet()) {
+			//System.out.println("## Freq " + methodCalledFreqEntry.getKey().getClassEntity().getDisplayName() + " method "
+			//				+ methodCalledFreqEntry.getKey().getMethodEntity().getDisplayName() + " " + methodCalledFreqEntry.getValue());
+			if (methodCalledFreqEntry.getValue() == 0) {
+				System.out.println("ClassHasUnusedMethods " + methodCalledFreqEntry.getKey().getClassEntity().getDisplayName() + " method "
+						+ methodCalledFreqEntry.getKey().getMethodEntity().getDisplayName() );
+				CodeSmell dc = new CodeSmell("ClassHasUnusedMethods", "",
+						new ClassProperty((IClass) methodCalledFreqEntry.getKey().getClassEntity()));
+				methodsAreNotCalled.add(dc);
+			}
+		}
+
 		this.setSetOfSmells(methodsAreNotCalled);
+	}
+
+	private void countMethodInvocations(final Map<CompositeMethodEntity, Integer> methodCalledFrequency,
+			final Set allMethodsInProject, final IMethod method1) {
+		final Iterator iteratorOnMethodInvocations = method1.getIteratorOnConstituents(IMethodInvocation.class);
+		while (iteratorOnMethodInvocations.hasNext()) {
+			final IMethodInvocation mi = (IMethodInvocation) iteratorOnMethodInvocations.next();
+			if (mi.getTargetEntity() != null && mi.getCalledMethod() != null
+					&& mi.getCalledMethod() instanceof IMethod) {
+				System.out.println("  > Method invocation " + mi.getCalledMethod().getDisplayName() + "  "
+						+ mi.getTargetEntity().getDisplayName());
+				if (allMethodsInProject.contains(mi.getCalledMethod())) {
+					updateFrequencyMap(methodCalledFrequency, 
+							new CompositeMethodEntity(mi.getTargetEntity(),(IMethod) mi.getCalledMethod()), 1);
+				}
+			}
+		}
+	}
+
+	private void updateFrequencyMap(final Map<CompositeMethodEntity, Integer> methodCalledFrequency, 
+			final CompositeMethodEntity compositeMethodEntity,
+			int initialValue) {
+		methodCalledFrequency.merge(compositeMethodEntity, initialValue, (a, b) -> a + b);
+	}
+
+	private Set getAllMethodsInProject(final IAbstractLevelModel anAbstractLevelModel) {
+		final Iterator iter = anAbstractLevelModel.getIteratorOnTopLevelEntities();
+		Set allMethods = new HashSet();
+		ClassPrimitives classPrimitives = ClassPrimitives.getInstance();
+		while (iter.hasNext()) {
+			final IFirstClassEntity anEntity = (IFirstClassEntity) iter.next();
+			if (anEntity instanceof IClass) {
+				List allMethodList = classPrimitives.listOfAllMethods(anEntity);
+				allMethods.addAll(allMethodList);
+			}
+		}
+
+		return allMethods;
+	}
+	
+	private void initialiseMethodCalledFrequencyForAllMethods(
+			final IAbstractLevelModel anAbstractLevelModel,
+			Map<CompositeMethodEntity, Integer> map) {
+		final Iterator iter = anAbstractLevelModel.getIteratorOnTopLevelEntities();
+		ClassPrimitives classPrimitives = ClassPrimitives.getInstance();
+		
+		while (iter.hasNext()) {
+			final IFirstClassEntity anEntity = (IFirstClassEntity) iter.next();
+			List<IMethod> overiddenAndConcreteMethodsList = new ArrayList<>();
+			if (anEntity instanceof IClass) {
+				Collection oAndC = classPrimitives.listOfOverriddenAndConcreteMethods(anEntity);
+				overiddenAndConcreteMethodsList.addAll(oAndC);
+				for(IMethod method: overiddenAndConcreteMethodsList) {
+					map.put(new CompositeMethodEntity(anEntity, method), 0);
+				}
+				
+				List<IFirstClassEntity> listOfAncestors = classPrimitives.listOfAncestors(anEntity);
+				for(IFirstClassEntity ancestor: listOfAncestors) {
+					if(ancestor instanceof IClass) {
+						List<IMethod> ancestorMethods = classPrimitives.listOfAllMethods(ancestor);
+						for(IMethod ancestorMethod: ancestorMethods) {
+							map.put(new CompositeMethodEntity(ancestor, ancestorMethod), 0);
+						}
+					}
+				}
+			}
+		}
 	}
 }
